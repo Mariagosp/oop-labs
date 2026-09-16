@@ -4,7 +4,7 @@ def show_second_dialog(parent):
     result = {"value": None}
 
     window = tk.Toplevel(parent)
-    window.title("Робота 1 — крок 2")
+    window.title("Task 1 — step 2")
     window.geometry("350x180")
     window.resizable(False, False)
 
@@ -13,7 +13,7 @@ def show_second_dialog(parent):
 
     label = tk.Label(
         window,
-        text="Друге діалогове вікно"
+        text="Second dialog window"
     )
     label.pack(pady=30)
 
@@ -34,21 +34,21 @@ def show_second_dialog(parent):
 
     back_button = tk.Button(
         buttons,
-        text="< Назад",
+        text="< Back",
         command=back_clicked
     )
     back_button.pack(side="left", padx=5)
 
     yes_button = tk.Button(
         buttons,
-        text="Так",
+        text="Yes",
         command=yes_clicked
     )
     yes_button.pack(side="left", padx=5)
 
     cancel_button = tk.Button(
         buttons,
-        text="Відміна",
+        text="Cancel",
         command=cancel_clicked
     )
     cancel_button.pack(side="left", padx=5)

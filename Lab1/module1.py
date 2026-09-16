@@ -4,7 +4,7 @@ def show_first_dialog(parent):
     result = {"value": None}
 
     window = tk.Toplevel(parent)
-    window.title("Робота 1 — крок 1")
+    window.title("Task 1 — step 1")
     window.geometry("350x180")
     window.resizable(False, False)
 
@@ -13,7 +13,7 @@ def show_first_dialog(parent):
 
     label = tk.Label(
         window,
-        text="Перше діалогове вікно"
+        text="First dialog window"
     )
     label.pack(pady=30)
 
@@ -30,14 +30,14 @@ def show_first_dialog(parent):
 
     next_button = tk.Button(
         buttons,
-        text="Далі >",
+        text="Next >",
         command=next_clicked
     )
     next_button.pack(side="left", padx=5)
 
     cancel_button = tk.Button(
         buttons,
-        text="Відміна",
+        text="Cancel",
         command=cancel_clicked
     )
     cancel_button.pack(side="left", padx=5)
