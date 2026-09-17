@@ -1,59 +1,54 @@
 import tkinter as tk
 
-def show_second_dialog(parent):
-    result = {"value": None}
 
-    window = tk.Toplevel(parent)
-    window.title("Task 1 — step 2")
-    window.geometry("350x180")
-    window.resizable(False, False)
+class SecondDialog:
+    def __init__(self, parent):
+        self.parent = parent
+        self.result = None
 
-    window.transient(parent)
-    window.grab_set()
+        self.window = tk.Toplevel(parent)
 
-    label = tk.Label(
-        window,
-        text="Second dialog window"
-    )
-    label.pack(pady=30)
+        self.window.title("Task 1 — Step 2")
+        self.window.geometry("350x180")
+        self.window.resizable(False, False)
 
-    buttons = tk.Frame(window)
-    buttons.pack()
+        self.window.transient(parent)
+        self.window.grab_set()
 
-    def back_clicked():
-        result["value"] = "back"
-        window.destroy()
+        self.create_widgets()
 
-    def yes_clicked():
-        result["value"] = "yes"
-        window.destroy()
+    def create_widgets(self):
+        self.label = tk.Label(self.window, text="Second dialog window")
+        self.label.pack(pady=30)
 
-    def cancel_clicked():
-        result["value"] = "cancel"
-        window.destroy()
+        self.buttons = tk.Frame(self.window)
+        self.buttons.pack()
 
-    back_button = tk.Button(
-        buttons,
-        text="< Back",
-        command=back_clicked
-    )
-    back_button.pack(side="left", padx=5)
+        self.back_button = tk.Button(
+            self.buttons, text="< Back", command=self.back_clicked
+        )
+        self.back_button.pack(side="left", padx=5)
 
-    yes_button = tk.Button(
-        buttons,
-        text="Yes",
-        command=yes_clicked
-    )
-    yes_button.pack(side="left", padx=5)
+        self.yes_button = tk.Button(self.buttons, text="Yes", command=self.yes_clicked)
+        self.yes_button.pack(side="left", padx=5)
 
-    cancel_button = tk.Button(
-        buttons,
-        text="Cancel",
-        command=cancel_clicked
-    )
-    cancel_button.pack(side="left", padx=5)
+        self.cancel_button = tk.Button(
+            self.buttons, text="Cancel", command=self.cancel_clicked
+        )
+        self.cancel_button.pack(side="left", padx=5)
 
-    parent.wait_window(window)
+    def back_clicked(self):
+        self.result = "back"
+        self.window.destroy()
 
-    return result["value"]
-  
+    def yes_clicked(self):
+        self.result = "yes"
+        self.window.destroy()
+
+    def cancel_clicked(self):
+        self.result = "cancel"
+        self.window.destroy()
+
+    def show(self):
+        self.parent.wait_window(self.window)
+        return self.result

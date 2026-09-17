@@ -1,68 +1,59 @@
 import tkinter as tk
 
-def show_group_dialog(parent):
-    result = {"value": None}
 
-    window = tk.Toplevel(parent)
-    window.title("Task 2")
-    window.geometry("350x300")
-    window.resizable(False, False)
+class GroupDialog:
+    def __init__(self, parent):
+        self.parent = parent
+        self.result = None
 
-    window.transient(parent)
-    window.grab_set()
+        self.groups = ["ІМ-51", "ІМ-52", "ІМ-53", "ІМ-54", "ІМ-о51"]
 
-    label = tk.Label(
-        window,
-        text="Select your group:"
-    )
-    label.pack(pady=10)
+        self.window = tk.Toplevel(parent)
 
-    groups = [
-        "ІМ-51",
-        "ІМ-52",
-        "ІМ-53",
-        "ІМ-54",
-        "ІМ-о51"
-    ]
+        self.window.title("Task 2")
+        self.window.geometry("350x300")
+        self.window.resizable(False, False)
 
-    listbox = tk.Listbox(
-        window,
-        height=8,
-        width=25
-    )
-    listbox.pack(pady=10)
+        self.window.transient(parent)
+        self.window.grab_set()
 
-    for group in groups:
-        listbox.insert(tk.END, group)
+        self.create_widgets()
 
-    buttons = tk.Frame(window)
-    buttons.pack(pady=10)
+    def create_widgets(self):
+        self.label = tk.Label(self.window, text="Select your group:")
+        self.label.pack(pady=10)
 
-    def yes_clicked():
-        selection = listbox.curselection()
+        self.listbox = tk.Listbox(self.window, height=8, width=25)
+        self.listbox.pack(pady=10)
+
+        self.fill_listbox()
+
+        self.buttons = tk.Frame(self.window)
+        self.buttons.pack(pady=10)
+
+        self.yes_button = tk.Button(self.buttons, text="Yes", command=self.yes_clicked)
+        self.yes_button.pack(side="left", padx=5)
+
+        self.cancel_button = tk.Button(
+            self.buttons, text="Cancel", command=self.cancel_clicked
+        )
+        self.cancel_button.pack(side="left", padx=5)
+
+    def fill_listbox(self):
+        for group in self.groups:
+            self.listbox.insert(tk.END, group)
+
+    def yes_clicked(self):
+        selection = self.listbox.curselection()
 
         if selection:
-            result["value"] = listbox.get(selection[0])
-            window.destroy()
+            self.result = self.listbox.get(selection[0])
+            self.window.destroy()
 
-    def cancel_clicked():
-        result["value"] = None
-        window.destroy()
+    def cancel_clicked(self):
+        self.result = None
+        self.window.destroy()
 
-    yes_button = tk.Button(
-        buttons,
-        text="Yes",
-        command=yes_clicked
-    )
-    yes_button.pack(side="left", padx=5)
-
-    cancel_button = tk.Button(
-        buttons,
-        text="Cancel",
-        command=cancel_clicked
-    )
-    cancel_button.pack(side="left", padx=5)
-
-    parent.wait_window(window)
-
-    return result["value"]
+    def show(self):
+        self.parent.wait_window(self.window)
+        return self.result

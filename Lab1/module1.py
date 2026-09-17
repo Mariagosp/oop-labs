@@ -1,47 +1,47 @@
 import tkinter as tk
 
-def show_first_dialog(parent):
-    result = {"value": None}
 
-    window = tk.Toplevel(parent)
-    window.title("Task 1 — step 1")
-    window.geometry("350x180")
-    window.resizable(False, False)
+class FirstDialog:
+    def __init__(self, parent):
+        self.parent = parent
+        self.result = None
 
-    window.transient(parent)
-    window.grab_set()
+        self.window = tk.Toplevel(parent)
 
-    label = tk.Label(
-        window,
-        text="First dialog window"
-    )
-    label.pack(pady=30)
+        self.window.title("Task 1 — Step 1")
+        self.window.geometry("350x180")
+        self.window.resizable(False, False)
 
-    buttons = tk.Frame(window)
-    buttons.pack()
+        self.window.transient(parent)
+        self.window.grab_set()
 
-    def next_clicked():
-        result["value"] = "next"
-        window.destroy()
+        self.create_widgets()
 
-    def cancel_clicked():
-        result["value"] = "cancel"
-        window.destroy()
+    def create_widgets(self):
+        self.label = tk.Label(self.window, text="First dialog window")
+        self.label.pack(pady=30)
 
-    next_button = tk.Button(
-        buttons,
-        text="Next >",
-        command=next_clicked
-    )
-    next_button.pack(side="left", padx=5)
+        self.buttons = tk.Frame(self.window)
+        self.buttons.pack()
 
-    cancel_button = tk.Button(
-        buttons,
-        text="Cancel",
-        command=cancel_clicked
-    )
-    cancel_button.pack(side="left", padx=5)
+        self.next_button = tk.Button(
+            self.buttons, text="Next >", command=self.next_clicked
+        )
+        self.next_button.pack(side="left", padx=5)
 
-    parent.wait_window(window)
+        self.cancel_button = tk.Button(
+            self.buttons, text="Cancel", command=self.cancel_clicked
+        )
+        self.cancel_button.pack(side="left", padx=5)
 
-    return result["value"]
+    def next_clicked(self):
+        self.result = "next"
+        self.window.destroy()
+
+    def cancel_clicked(self):
+        self.result = "cancel"
+        self.window.destroy()
+
+    def show(self):
+        self.parent.wait_window(self.window)
+        return self.result
