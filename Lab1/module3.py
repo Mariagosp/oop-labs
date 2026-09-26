@@ -1,4 +1,6 @@
 import tkinter as tk
+import json
+from pathlib import Path
 
 
 class GroupDialog:
@@ -6,7 +8,10 @@ class GroupDialog:
         self.parent = parent
         self.result = None
 
-        self.groups = ["ІМ-51", "ІМ-52", "ІМ-53", "ІМ-54", "ІМ-о51"]
+        file_path = Path(__file__).parent / "groups.json"
+
+        with open(file_path, "r", encoding="utf-8") as file:
+          self.groups = json.load(file)
 
         self.window = tk.Toplevel(parent)
 
