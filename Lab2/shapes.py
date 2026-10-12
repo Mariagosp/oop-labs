@@ -55,10 +55,26 @@ class Ellipse(Shape):
         self.x = x
         self.y = y
 
-    def draw(self, canvas):
-        x1 = min(self.cx, 2 * self.cx - self.x)
-        y1 = min(self.cy, 2 * self.cy - self.y)
-        x2 = max(self.cx, 2 * self.cx - self.x)
-        y2 = max(self.cy, 2 * self.cy - self.y)
+    def get_bounds(self):
+        opposite_x = 2 * self.cx - self.x
+        opposite_y = 2 * self.cy - self.y
 
-        canvas.create_oval(x1, y1, x2, y2, outline="black", fill="gray", width=2)
+        return (
+            min(opposite_x, self.x),
+            min(opposite_y, self.y),
+            max(opposite_x, self.x),
+            max(opposite_y, self.y),
+        )
+
+    def draw(self, canvas):
+        left, top, right, bottom = self.get_bounds()
+
+        canvas.create_oval(
+            left,
+            top,
+            right,
+            bottom,
+            outline="black",
+            fill="gray",
+            width=2,
+        )

@@ -138,16 +138,14 @@ class GraphicEditor:
             )
 
         elif self.drawing_shape == "Ellipse":
-            left = min(x1, 2 * x1 - x)
-            top = min(y1, 2 * y1 - y)
-            right = max(x1, 2 * x1 - x)
-            bottom = max(y1, 2 * y1 - y)
+            opposite_x = 2 * x1 - x
+            opposite_y = 2 * y1 - y
 
             self.canvas.create_oval(
-                left,
-                top,
-                right,
-                bottom,
+                min(opposite_x, x),
+                min(opposite_y, y),
+                max(opposite_x, x),
+                max(opposite_y, y),
                 outline="blue",
                 fill="",
                 width=2,
@@ -162,8 +160,7 @@ class GraphicEditor:
     def show_about(self):
         messagebox.showinfo(
             "About",
-            "Lab2 — Graphic Object Editor.\n" 
-            "Developed using Python and Tkinter.",
+            "Lab2 — Graphic Object Editor.\n" "Developed using Python and Tkinter.",
         )
 
 
