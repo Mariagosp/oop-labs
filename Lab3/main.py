@@ -70,10 +70,10 @@ class GraphicEditor:
         toolbar.pack(side=tk.TOP, fill=tk.X)
 
         buttons = [
-            ("Точка", "Point", "Малювати точку"),
-            ("Лінія", "Line", "Малювати лінію"),
-            ("Прямокутник", "Rectangle", "Малювати прямокутник"),
-            ("Еліпс", "Ellipse", "Малювати еліпс"),
+            ("Точка", "Point", "Намалювати точку"),
+            ("Лінія", "Line", "Намалювати лінію"),
+            ("Прямокутник", "Rectangle", "Намалювати прямокутник"),
+            ("Еліпс", "Ellipse", "Намалювати еліпс"),
         ]
 
         for label, shape_name, tooltip_text in buttons:
