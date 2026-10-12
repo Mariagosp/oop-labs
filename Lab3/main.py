@@ -8,7 +8,8 @@ from tooltip import ToolTip
 class GraphicEditor:
     def __init__(self, root):
         self.root = root
-        self.root.title("Lab3 — Graphic Object Editor")
+        self.current_shape = "Point"
+        self.root.title(f"Lab3 — Graphic Object Editor — {self.current_shape}")
         self.root.geometry("900x600")
 
         self.shapes = []
@@ -16,7 +17,6 @@ class GraphicEditor:
         self.shapes = [None] * self.max_shapes
         self.shape_count = 0
 
-        self.current_shape = "Point"
         self.drawing_shape = self.current_shape
 
         self.drawing_allowed = True
