@@ -1,55 +1,69 @@
+import os
 import tkinter as tk
 from tkinter import messagebox
 
 from shapes import Point, Line, Rectangle, Ellipse
 from tooltip import ToolTip
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 class GraphicEditor:
+    SHAPE_OPTIONS = [
+        ("Точка", "Point", "Намалювати точку", "point.png"),
+        ("Лінія", "Line", "Намалювати лінію", "line.png"),
+        ("Прямокутник", "Rectangle", "Намалювати прямокутник", "rectangle.png"),
+        ("Еліпс", "Ellipse", "Намалювати еліпс", "ellipse.png"),
+    ]
+
     def __init__(self, root):
         self.root = root
         self.current_shape = "Point"
-        self.root.title(f"Lab3 — Graphic Object Editor — {self.current_shape}")
         self.root.geometry("900x600")
 
-        self.shapes = []
         self.max_shapes = 107
         self.shapes = [None] * self.max_shapes
         self.shape_count = 0
 
         self.drawing_shape = self.current_shape
-
         self.drawing_allowed = True
 
         self.start_x = 0
         self.start_y = 0
 
+        self.icons = {}
+        self.tool_buttons = {}
+        self.tool_icons = {}
+
         self.create_menu()
         self.create_toolbar()
         self.create_canvas()
         self.bind_mouse_events()
+        self.update_shape_indicator()
+
+    def shape_label(self, shape_name):
+        for label, name, _tip, _icon in self.SHAPE_OPTIONS:
+            if name == shape_name:
+                return label
+        return shape_name
+
+    def update_shape_indicator(self):
+        self.root.title(f"Lab3 — {self.shape_label(self.current_shape)}")
+        self.update_toolbar()
 
     def create_menu(self):
         menu_bar = tk.Menu(self.root)
 
         file_menu = tk.Menu(menu_bar, tearoff=0)
-        file_menu.add_command(label="Clear", command=self.clear_canvas)
+        file_menu.add_command(label="Очистити", command=self.clear_canvas)
         file_menu.add_separator()
-        file_menu.add_command(label="Exit", command=self.root.destroy)
-        menu_bar.add_cascade(label="File", menu=file_menu)
+        file_menu.add_command(label="Вихід", command=self.root.destroy)
+        menu_bar.add_cascade(label="Файл", menu=file_menu)
 
         self.objects_menu = tk.Menu(menu_bar, tearoff=0)
-
-        shape_options = [
-            ("Точка", "Point"),
-            ("Лінія", "Line"),
-            ("Прямокутник", "Rectangle"),
-            ("Еліпс", "Ellipse"),
-        ]
-
         self.shape_var = tk.StringVar(value=self.current_shape)
 
-        for label, shape_name in shape_options:
+        for label, shape_name, _tip, _icon in self.SHAPE_OPTIONS:
             self.objects_menu.add_radiobutton(
                 label=label,
                 variable=self.shape_var,
@@ -57,38 +71,56 @@ class GraphicEditor:
                 command=self.select_shape,
             )
 
-        menu_bar.add_cascade(label="Objects", menu=self.objects_menu)
+        menu_bar.add_cascade(label="Об'єкти", menu=self.objects_menu)
 
         help_menu = tk.Menu(menu_bar, tearoff=0)
-        help_menu.add_command(label="About", command=self.show_about)
-        menu_bar.add_cascade(label="Help", menu=help_menu)
+        help_menu.add_command(label="Про програму", command=self.show_about)
+        menu_bar.add_cascade(label="Довідка", menu=help_menu)
 
         self.root.config(menu=menu_bar)
 
     def create_toolbar(self):
-        toolbar = tk.Frame(self.root, bd=1, relief=tk.RAISED)
+        toolbar = tk.Frame(self.root, bd=1, relief=tk.RAISED, bg="#e4e4e4")
         toolbar.pack(side=tk.TOP, fill=tk.X)
 
-        buttons = [
-            ("Точка", "Point", "Намалювати точку"),
-            ("Лінія", "Line", "Намалювати лінію"),
-            ("Прямокутник", "Rectangle", "Намалювати прямокутник"),
-            ("Еліпс", "Ellipse", "Намалювати еліпс"),
-        ]
+        for _label, shape_name, tip, icon_file in self.SHAPE_OPTIONS:
+            image = tk.PhotoImage(file=os.path.join(BASE_DIR, "icons", icon_file))
+            self.icons[shape_name] = image
 
-        for label, shape_name, tooltip_text in buttons:
-            button = tk.Button(
-                toolbar,
-                text=label,
-                command=lambda name=shape_name: self.select_shape_by_name(name),
+            # Не Button: на macOS системна кнопка не зберігає втиснутий вигляд.
+            button = tk.Frame(toolbar, bd=2, relief=tk.RAISED, bg="#f3f3f3")
+            icon = tk.Label(
+                button,
+                image=image,
+                bg="#f3f3f3",
+                bd=0,
+                padx=5,
+                pady=5,
+                cursor="hand2",
             )
+            icon.pack()
             button.pack(side=tk.LEFT, padx=3, pady=3)
-            ToolTip(button, tooltip_text)
+
+            for widget in (button, icon):
+                widget.bind(
+                    "<Button-1>",
+                    lambda event, name=shape_name: self.select_shape_by_name(name),
+                )
+            ToolTip(icon, tip)
+            self.tool_buttons[shape_name] = button
+            self.tool_icons[shape_name] = icon
+
+    def update_toolbar(self):
+        for name, button in self.tool_buttons.items():
+            selected = name == self.current_shape
+            bg = "#c4c4c4" if selected else "#f3f3f3"
+            button.config(relief=tk.SUNKEN if selected else tk.RAISED, bg=bg)
+            self.tool_icons[name].config(bg=bg)
 
     def select_shape_by_name(self, shape_name):
         self.current_shape = shape_name
         self.shape_var.set(shape_name)
-        self.root.title(f"Lab3 — Graphic Object Editor — {shape_name}")
+        self.update_shape_indicator()
 
     def create_canvas(self):
         self.canvas = tk.Canvas(self.root, bg="white", cursor="cross")
@@ -96,7 +128,7 @@ class GraphicEditor:
 
     def select_shape(self):
         self.current_shape = self.shape_var.get()
-        self.root.title(f"Lab3 — Graphic Object Editor — {self.current_shape}")
+        self.update_shape_indicator()
 
     def bind_mouse_events(self):
         self.canvas.bind("<Button-1>", self.on_mouse_down)
@@ -112,8 +144,8 @@ class GraphicEditor:
 
         if not self.drawing_allowed:
             messagebox.showwarning(
-                "Warning",
-                f"The limit of {self.max_shapes} objects has been reached.",
+                "Попередження",
+                f"Досягнуто межу в {self.max_shapes} об'єктів.",
             )
             return
 
@@ -137,7 +169,7 @@ class GraphicEditor:
         self.canvas.delete("preview")
 
         if not self.drawing_allowed:
-          return
+            return
 
         if self.drawing_shape == "Point":
             return
@@ -220,8 +252,9 @@ class GraphicEditor:
 
     def show_about(self):
         messagebox.showinfo(
-            "About",
-            "Lab3 — Graphic Object Editor.\n" "Developed using Python and Tkinter.",
+            "Про програму",
+            "Lab3 — графічний редактор об'єктів.\n"
+            "Розроблено на Python і Tkinter.",
         )
 
 

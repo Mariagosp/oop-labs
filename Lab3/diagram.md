@@ -45,13 +45,18 @@ classDiagram
 
     class GraphicEditor {
         -root
-        -shapes
-        -max_shapes
+        -shapes : Shape*[107]
+        -max_shapes = 107
         -shape_count
         -current_shape
         -drawing_shape
+        -tool_buttons
+        -tool_icons
+        -icons
         +create_menu()
         +create_toolbar()
+        +update_toolbar()
+        +update_shape_indicator()
         +create_canvas()
         +select_shape()
         +select_shape_by_name(shape_name)
@@ -78,6 +83,7 @@ classDiagram
     Shape <|-- Rectangle
     Shape <|-- Ellipse
 
+    GraphicEditor "1" o-- "107" Shape : shapes
     GraphicEditor ..> Point : creates
     GraphicEditor ..> Line : creates
     GraphicEditor ..> Rectangle : creates
